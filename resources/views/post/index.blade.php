@@ -25,7 +25,7 @@
                     <div class="container flex justify-between mx-auto">
                         <div class="w-full lg:w-8/12">
                             <div class="flex items-center justify-between">
-                                <h1 class="text-xl font-bold text-gray-700 md:text-2xl">Post</h1>
+                                <h1 class="text-xl font-bold text-gray-700 md:text-2xl">{{ $nbr_posts }} Posts</h1>
                                 <div>
                                     <select class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                                         <option>Latest</option>
@@ -91,10 +91,19 @@
                                     <div class="flex items-center justify-between mt-4">
                                         <a href="{{ route('post.show', $post) }}" class="text-blue-500 hover:underline">Read more</a>
                                         <div>
-                                            <a href="#" class="flex items-center">
-                                                <img src="{{ ((User::find($post->author))->avatar_path != NULL) ? asset('storage/' . (User::find($post->author))->avatar_path) : Avatar::create((User::find($post->author))->name)->toBase64() }}" alt="avatar" class="hidden object-cover w-10 h-10 mx-4 rounded-full sm:block">
+                                            <a href="{{ route('show.user', User::find($post->author)) }}" class="flex items-center">
+                                                <img src="{{ ((User::find($post->author))->avatar_path != NULL) ? asset('storage/' . (User::find($post->author))->avatar_path) : Avatar::create((User::find($post->author))->name)->toBase64() }}" alt="avatar" class="hidden object-cover w-8 h-8 mx-4 rounded-full sm:block">
                                                 <h1 class="font-bold text-gray-700 hover:underline">
+                                                    @auth
+                                                    @if (Auth::user()->name == (User::find($post->author))->name)
+                                                        {{ __('Vous') }}
+                                                    @else
                                                     {{ (User::find($post->author))->name }}
+                                                    @endif
+                                                    @endauth
+                                                    @guest
+                                                    {{ (User::find($post->author))->name }}
+                                                    @endguest
                                                 </h1>
                                             </a>
                                         </div>
@@ -145,8 +154,8 @@
                             <div class="px-8 mt-10">
                                 <h1 class="mb-4 text-xl font-bold text-gray-700">Recent Post</h1>
                                 <div class="flex flex-col max-w-sm px-8 py-6 mx-auto bg-white rounded-lg shadow-md">
-                                    <div class="flex items-center justify-center"><a href="#"
-                                            class="px-2 py-1 text-sm text-green-100 bg-gray-600 rounded hover:bg-gray-500">Laravel</a>
+                                    <div class="flex items-center justify-center">
+                                        <a href="#" class="px-2 py-1 text-sm text-green-100 bg-gray-600 rounded hover:bg-gray-500">Laravel</a>
                                     </div>
                                     <div class="mt-4"><a href="#" class="text-lg font-medium text-gray-700 hover:underline">Build
                                             Your New Idea with Laravel Freamwork.</a></div>

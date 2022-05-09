@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Tag;
 use App\Models\Post;
 use App\Models\Image;
+use App\Models\Comment;
 use App\Models\PostTag;
 use App\Models\ImagePost;
 use Illuminate\Http\Request;
@@ -12,6 +13,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use Illuminate\Support\Facades\Redirect;
 
 class PostController extends Controller
 {
@@ -26,8 +28,9 @@ class PostController extends Controller
         {
             Carbon::setLocale('fr');
             $posts = Post::latest()->paginate(6);
+            $nbr_posts = Post::count();
             $tags = Tag::all();
-            return view('post.index')->with('posts', $posts)->with('tags', $tags);
+            return view('post.index')->with('posts', $posts)->with('nbr_posts', $nbr_posts)->with('tags', $tags);
         }
         else
         {
@@ -39,10 +42,12 @@ class PostController extends Controller
                         ->orWhere('content', 'LIKE', "%{$search}%")
                         ->latest()
                         ->paginate(6);
+            $nbr_posts = $posts->count();
 
             $tags = Tag::all();
             return view('post.index')
                     ->with('posts', $posts)
+                    ->with('nbr_posts', $nbr_posts)
                     ->with('tags', $tags);
         }
     }
@@ -105,9 +110,19 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
+        Carbon::setLocale('fr');
+        $comments = Comment::where('post_id', $post->id)->orderBy('created_at', 'Desc')->get();
         $post->timestamps = false;
         $post->increment('views');
-        return view('post.show')->with('post', $post);
+
+        $related = Post::whereHas('tags', function ($q) use ($post) {
+            return $q->whereIn('name', $post->tags->pluck('name'));
+        })
+        ->where('id', '!=', $post->id)
+        ->take(3)
+        ->get();
+
+        return view('post.show', compact('post', 'comments', 'related'));
     }
 
     /**
@@ -214,6 +229,37 @@ class PostController extends Controller
         return redirect()->back()->with('message', 'Post deleted successfully');
     }
 
+    /**
+     * Restore the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function restore(int $id)
+    {
+        Post::where('id', $id)->restore();
+        return redirect()->back()->with('message', 'Post restored successfully');
+    }
+
+    /**
+     * Remove definitly the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroyDefinitly(int $id)
+    {
+        Post::where('id', $id)->forceDelete();
+
+        return redirect()->back()->with('message', 'Post deleted definitly');
+    }
+
+    /**
+     * Show the specified resource from storage.
+     *
+     * @param  \App\Models\Tag  $tag
+     * @return \Illuminate\Http\Response
+     */
     public function tag(Tag $tag)
     {
         return view('post.tag')->with('tag', $tag)->with('posts', $tag->posts()->latest()->paginate(3));

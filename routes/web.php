@@ -20,28 +20,44 @@ use App\Http\Controllers\DashboardController;
 */
 
 Route::get('/', [PageController::class, 'home'])->name('home');
+Route::get('/about', [PageController::class, 'about'])->name('about');
+Route::get('/details-user/{user}', [PageController::class, 'showUser'])->name('show.user');
+
 Route::get('/posts', [PostController::class, 'index'])->name('post.index');
 Route::get('/tags/{tag}', [PostController::class, 'tag'])->name('post.tag');
-Route::get('/tags', [TagController::class, 'index'])->name('tag.index');
-Route::get('/about', [PageController::class, 'about'])->name('about');
 
-Route::middleware(['auth'])->group(function (){
+Route::get('/tags', [TagController::class, 'index'])->name('tag.index');
+
+
+//User
+Route::middleware(['auth', 'verified'])->group(function (){
 
     Route::resource('post', PostController::class)->except('index');
     Route::resource('tag', TagController::class)->except('index');
-    Route::post('/comment', [CommentController::class, 'store'])->name('comment');
-    Route::get('/admin/posts', [DashboardController::class, 'posts'])->name('admin.posts');
-    Route::get('/admin/search', [DashboardController::class, 'search'])->name('admin.search');
-    Route::get('/users', [DashboardController::class, 'users'])->name('admin.users');
-    Route::get('/admin/tags', [DashboardController::class, 'tags'])->name('admin.tags');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/comment/{post}', [CommentController::class, 'store'])->name('comment.store');
+    Route::delete('/destroy/{user}', [UserController::class, 'destroy'])->name('user.destroy');
+    Route::put('/update', [UserController::class, 'update'])->name('user.update');
 });
 
+//Admin
+Route::middleware(['role:admin', 'auth'])->prefix('admin')->group(function (){
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
-Route::get('/profile', [DashboardController::class, 'profile'])->middleware(['auth'])->name('user.profil');
-Route::get('/admin/user/edit/{user}', [DashboardController::class, 'editUser'])->middleware(['auth'])->name('admin.user.edit');
-Route::put('/admin/user/update/{user}', [DashboardController::class, 'updateUser'])->middleware(['auth'])->name('admin.user.update');
-Route::put('/profile-update', [UserController::class, 'update'])->middleware(['auth'])->name('user.update');
-Route::delete('/user-destroy/{user}', [UserController::class, 'destroy'])->middleware(['auth'])->name('user.destroy');
+    Route::get('/posts', [DashboardController::class, 'posts'])->name('admin.posts');
+    Route::get('/posts/trashed', [DashboardController::class, 'postsTrashed'])->name('admin.posts.trashed');
+    Route::delete('/posts/{id}/restore', [PostController::class, 'destroyDefinitly'])->name('admin.posts.forcedelete');
+    Route::get('/posts/{id}/restore', [PostController::class, 'restore'])->name('admin.posts.restore');
+    Route::get('/posts/most-viewed', [DashboardController::class, 'postsMostViewed'])->name('admin.posts.mostviewed');
+    Route::get('/search', [DashboardController::class, 'search'])->name('admin.search');
+    Route::get('/users', [DashboardController::class, 'users'])->name('admin.users');
+    Route::get('/tags', [DashboardController::class, 'tags'])->name('admin.tags');
+    Route::get('/profile', [DashboardController::class, 'profile'])->name('admin.profile');
+    Route::put('/update', [UserController::class, 'update'])->name('admin.update');
+    Route::get('/user/{user}/edit', [DashboardController::class, 'editUser'])->name('admin.user.edit');
+    Route::put('/user/{user}/update', [DashboardController::class, 'updateUser'])->name('admin.user.update');
+    Route::get('/post/{post}/edit', [DashboardController::class, 'editPost'])->name('admin.post.edit');
+    Route::put('/post/{post}/update', [DashboardController::class, 'updatePost'])->name('admin.post.update');
+});
+
 
 require __DIR__.'/auth.php';

@@ -28,6 +28,6 @@ class Post extends Model
 
     public function comments()
     {
-        return $this->belongsToMany(Comment::class, 'comment_posts');
+        return $this->hasMany(Comment::class)->whereNull('parent_id');
     }
 }

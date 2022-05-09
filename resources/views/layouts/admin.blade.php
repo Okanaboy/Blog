@@ -41,7 +41,7 @@
                         </div>
 
                         <nav class="mt-10">
-                            <a class="flex items-center mt-4 py-2 px-6 bg-gray-700 bg-opacity-25 text-gray-100" href="{{ route('dashboard') }}">
+                            <a class="flex items-center mt-4 py-2 px-6 bg-opacity-25 text-gray-100" href="{{ route('dashboard') }}">
                                 <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -53,7 +53,7 @@
                                 <span class="mx-3">Dashboard</span>
                             </a>
 
-                            <a class="flex items-center mt-4 py-2 px-6 text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
+                            <a class="flex items-center mt-4 py-2 px-6 text-gray-100 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
                                 href="{{ route('admin.posts') }}">
                                 <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor">
@@ -65,7 +65,7 @@
                                 <span class="mx-3">Posts</span>
                             </a>
 
-                            <a class="flex items-center mt-4 py-2 px-6 text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
+                            <a class="flex items-center mt-4 py-2 px-6 text-gray-100 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
                                 href="{{ route('admin.users') }}">
                                 <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor">
@@ -77,7 +77,7 @@
                                 <span class="mx-3">Users</span>
                             </a>
 
-                            <a class="flex items-center mt-4 py-2 px-6 text-gray-500 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
+                            <a class="flex items-center mt-4 py-2 px-6 text-gray-100 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
                                 href="{{ route('admin.tags') }}">
                                 <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor">
@@ -131,8 +131,7 @@
                                     <div x-show="dropdownOpen"
                                         class="absolute right-0 mt-2 w-48 bg-white rounded-md overflow-hidden shadow-xl z-10"
                                         style="display: none;">
-                                        <a href="{{ route('user.profil') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-600 hover:text-white">Profile</a>
-                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-600 hover:text-white">Posts</a>
+                                        <a href="{{ route('admin.profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-600 hover:text-white">Profile</a>
                                         <form action="{{ route('logout') }}" method="POST">
                                             @csrf
 
@@ -149,5 +148,11 @@
                 </div>
             </div>
         </div>
+
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('#tag').select2();
+            });
+        </script>
     </body>
 </html>

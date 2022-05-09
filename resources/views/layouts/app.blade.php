@@ -36,6 +36,7 @@
                 {{ $slot }}
             </main>
         </div>
+        @include('layouts.footer')
         <script type="text/javascript">
             $(document).ready(function() {
                 $('#tag').select2();

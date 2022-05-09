@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use App\Models\Comment;
 use App\Models\CommentPost;
+use App\Models\CommentUser;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
-use App\Models\Post;
 
 class CommentController extends Controller
 {
@@ -38,14 +40,13 @@ class CommentController extends Controller
      */
     public function store(StoreCommentRequest $request, Post $post)
     {
-        $comment = Comment::create([
-            'content' => $request->content
-        ]);
-        dd($post->id);
-        CommentPost::create([
-            'comment_id' => $comment->id,
+        Comment::create([
+            'content' => $request->content,
+            'author_id' => Auth::user()->id,
             'post_id' => $post->id
         ]);
+
+        return redirect()->back()->with('message', 'Comment added successfully');
     }
 
     /**

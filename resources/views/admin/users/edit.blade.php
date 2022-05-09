@@ -1,5 +1,14 @@
 <x-admin-layout>
     <div class="py-12">
+        <nav class="bg-grey-light rounded-md w-full my-5 ml-5 text-lg font-semibold">
+            <ol class="list-reset flex">
+              <li><a href="{{ route('dashboard') }}" class="text-blue-600 hover:text-blue-700">Dashboard</a></li>
+              <li><span class="text-gray-500 mx-2">></span></li>
+              <li><a href="{{ route('admin.users') }}" class="text-blue-600 hover:text-blue-700">User</a></li>
+              <li><span class="text-gray-500 mx-2">></span></li>
+              <li class="text-gray-500">{{ $user->name }}</li>
+            </ol>
+        </nav>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if (session()->has('success'))
             <div class="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 my-3 shadow-md" role="alert">
