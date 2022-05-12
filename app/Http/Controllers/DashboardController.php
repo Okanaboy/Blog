@@ -79,6 +79,12 @@ class DashboardController extends Controller
         return view('admin.users.edit')->with('user', $user);
     }
 
+    public function usersTrashed()
+    {
+        $users = User::onlyTrashed()->latest()->paginate(12);
+        return view('admin.users.trashed')->with('users', $users);
+    }
+
     public function updateUser(Request $request, User $user)
     {
         User::where('id', '=', $user->id)->update([
@@ -111,6 +117,19 @@ class DashboardController extends Controller
         return redirect()->back()->with('success', 'Profile updated');
     }
 
+    public function destroyUser(User $user)
+    {
+        $all_user = Post::where('author', '=', $user->id)->get();
+        foreach ($all_user as $post)
+        {
+            PostTag::where('post_id', '=', $post->id)->delete();
+        }
+        Post::where('author', '=', $user->id)->delete();
+        User::where('id', '=', $user->id)->delete();
+
+        return redirect()->back()->with('message', 'User deleted successfully');
+    }
+
     public function editPost(Post $post)
     {
         $tags_ids = PostTag::where('post_id', '=', $post->id)->get();
@@ -124,7 +143,6 @@ class DashboardController extends Controller
 
     public function updatePost(UpdatePostRequest $request, Post $post)
     {
-        // dd($request);
         Post::where('id', '=', $post->id)
                 ->update([
                     'title' => $request->title,

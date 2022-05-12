@@ -10,22 +10,23 @@
         </nav>
         <div class="flex flex-col mt-8">
 
-            <nav class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 rounded my-2 dark:bg-gray-800">
-                <div class="hidden w-full md:block md:w-auto" id="mobile-menu">
-                    <ul class="flex flex-col mt-4 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium">
-                        <li>
-                            <x-nav-link :href="route('admin.users')" :active="request()->routeIs('admin.users')">
-                                {{ __('Actif') }}
-                            </x-nav-link>
-                        </li>
-                        <li>
-                            <x-nav-link :href="route('admin.users.trashed')" :active="request()->routeIs('admin.users.trashed')">
-                                {{ __('Thrased') }}
-                            </x-nav-link>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
+        <nav class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 rounded my-2 dark:bg-gray-800">
+            <div class="hidden w-full md:block md:w-auto" id="mobile-menu">
+                <ul class="flex flex-col mt-4 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium">
+                    <li>
+                        <x-nav-link :href="route('admin.users')" :active="request()->routeIs('admin.users')">
+                            {{ __('Actif') }}
+                        </x-nav-link>
+                    </li>
+                    <li>
+                        <x-nav-link :href="route('admin.users.trashed')" :active="request()->routeIs('admin.users.trashed')">
+                            {{ __('Thrased') }}
+                        </x-nav-link>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
             <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
                 <div class="align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200">
                     <table class="min-w-max w-full table-auto bg-white">
@@ -65,21 +66,19 @@
                                 <td class="py-3 px-6 text-center">
                                     <div class="flex item-center justify-center">
                                         <div class="w-4 mr-2 transform hover:text-indigo-500 hover:scale-110">
-                                            @if (!$user->hasRole('admin'))
-                                            <a href="{{ route('admin.user.edit', $user) }}">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                            <a href="{{ route('admin.user.restore', $user->id) }}" title="restore">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                                                 </svg>
                                             </a>
-                                            @endif
                                         </div>
                                         <div class="w-4 mr-2 transform hover:text-red-500 hover:scale-110">
                                             @if (!$user->hasRole('admin'))
-                                            <form action="{{ route('admin.user.destroy', $user) }}" method="POST">
+                                            <form action="{{ route('admin.users.forcedestroy', $user->id) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
 
-                                                <button type="submit" class="transform hover:text-red-500 hover:scale-110">
+                                                <button type="submit" class="transform hover:text-red-500 hover:scale-110" title="delete">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                     </svg>

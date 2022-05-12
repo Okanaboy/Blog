@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Controllers\PostController;
+use App\Models\Comment;
+use App\Models\ImagePost;
 use App\Models\Post;
 use App\Models\PostTag;
 
@@ -50,14 +52,44 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        $all_post = Post::where('author', '=', $user->id)->get();
-        foreach ($all_post as $post)
+        $all_user = Post::where('author', '=', $user->id)->get();
+        foreach ($all_user as $post)
         {
             PostTag::where('post_id', '=', $post->id)->delete();
+            ImagePost::where('post_id', '=', $post->id)->delete();
         }
+        Comment::where('author_id', '=', $user->id)->delete();
         Post::where('author', '=', $user->id)->delete();
         User::where('id', '=', $user->id)->delete();
 
         return redirect()->route('home');
+    }
+
+    public function forceDestroy(int $id)
+    {
+        User::where('id', $id)->forceDelete();
+
+        return redirect()->back()->with('message', 'User deleted definitly');
+    }
+
+    public function restore(int $id)
+    {
+        User::where('id', $id)->restore();
+
+        $all_post = Post::where('author', '=', $id)->get();
+        foreach ($all_post as $post)
+        {
+            PostTag::where('post_id', '=', $post->id)->restore();
+            ImagePost::where('post_id', '=', $post->id)->restore();
+        }
+
+        $all_comment = Comment::where('author_id', '=', $id)->get();
+        foreach ($all_comment as $comment)
+        {
+            Comment::where('id', '=', $comment->id)->restore();
+        }
+        Post::where('author', '=', $id)->restore();
+
+        return redirect()->back()->with('message', 'User restored successfully');
     }
 }

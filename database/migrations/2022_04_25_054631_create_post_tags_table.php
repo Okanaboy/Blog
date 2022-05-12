@@ -24,6 +24,7 @@ class CreatePostTagsTable extends Migration
 
             $table->primary(['post_id', 'tag_id']);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
